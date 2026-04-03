@@ -1,0 +1,45 @@
+@import "tailwindcss";
+
+@theme {
+  --color-neon-pink: #ff007f;
+  --color-neon-yellow: #ccff00;
+  --color-neon-blue: #00f0ff;
+  --color-neon-purple: #bc13fe;
+  
+  --font-sans: "Inter", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+}
+
+@layer base {
+  body {
+    @apply bg-black text-white selection:bg-neon-pink selection:text-white;
+  }
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.neon-glow {
+  box-shadow: 0 0 15px var(--color-neon-pink);
+}
+
+.neon-glow-blue {
+  box-shadow: 0 0 15px var(--color-neon-blue);
+}
+
+.neon-text-glow {
+  text-shadow: 0 0 10px currentColor;
+}
+
+/* Slot machine animation */
+@keyframes slot-scroll {
+  0% { transform: translateY(0); }
+  100% { transform: translateY(-50%); }
+}
+
+.animate-slot {
+  animation: slot-scroll 0.5s linear infinite;
+}
