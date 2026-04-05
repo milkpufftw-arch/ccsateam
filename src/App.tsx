@@ -28,6 +28,8 @@ export default function App() {
   const [groups, setGroups] = useState<Group[]>([]);
   const [inputText, setInputText] = useState('');
   const [error, setError] = useState<string | null>(null);
+  const [minGroupSize, setMinGroupSize] = useState<number>(8);
+  const [maxGroupSize, setMaxGroupSize] = useState<number>(9);
   
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
@@ -115,8 +117,9 @@ export default function App() {
 
   const performGrouping = () => {
     const total = members.length;
-    // Target 8-9 people per group
-    const groupCount = Math.max(1, Math.round(total / 8.5));
+    // Calculate group count based on average of min and max
+    const avgSize = (minGroupSize + maxGroupSize) / 2;
+    const groupCount = Math.max(1, Math.round(total / avgSize));
     const newGroups: Group[] = Array.from({ length: groupCount }, (_, i) => ({
       id: i + 1,
       members: []
@@ -213,7 +216,7 @@ export default function App() {
           <motion.h1 
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
-            className="text-6xl md:text-8xl font-black tracking-tighter mb-6 italic"
+            className="text-6xl md:text-8xl font-black tracking-tighter mb-6"
           >
             <span className="text-white">隨機</span>
             <span className="text-neon-pink neon-text-glow">分組</span>
@@ -307,6 +310,34 @@ export default function App() {
                   )}
                 </div>
 
+                {/* Group Size Settings */}
+                <div className="mt-6 p-4 bg-white/5 rounded-2xl border border-white/10">
+                  <label className="block text-xs font-bold text-gray-500 uppercase mb-3 tracking-widest">分組設定 (每組人數範圍)</label>
+                  <div className="flex items-center gap-4">
+                    <div className="flex-1">
+                      <input 
+                        type="number" 
+                        value={minGroupSize} 
+                        onChange={(e) => setMinGroupSize(Math.max(1, parseInt(e.target.value) || 1))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl p-2 text-center font-bold focus:border-neon-blue outline-none transition-all"
+                        placeholder="最小"
+                      />
+                      <span className="block text-[10px] text-center mt-1 text-gray-500 font-bold">最小人數</span>
+                    </div>
+                    <div className="text-gray-600 font-black">TO</div>
+                    <div className="flex-1">
+                      <input 
+                        type="number" 
+                        value={maxGroupSize} 
+                        onChange={(e) => setMaxGroupSize(Math.max(minGroupSize, parseInt(e.target.value) || minGroupSize))}
+                        className="w-full bg-black/50 border border-white/10 rounded-xl p-2 text-center font-bold focus:border-neon-blue outline-none transition-all"
+                        placeholder="最大"
+                      />
+                      <span className="block text-[10px] text-center mt-1 text-gray-500 font-bold">最大人數</span>
+                    </div>
+                  </div>
+                </div>
+
                 <button
                   disabled={members.length < 2}
                   onClick={startGrouping}
@@ -344,7 +375,7 @@ export default function App() {
                 </div>
                 <div className="absolute -inset-4 border border-neon-pink/30 rounded-[40px] animate-pulse" />
               </div>
-              <h2 className="text-4xl font-black text-white italic animate-bounce tracking-widest">
+              <h2 className="text-4xl font-black text-white tracking-widest">
                 正在計算最佳組合...
               </h2>
               <p className="text-neon-blue mt-4 font-bold">跨區、跨年資演算法運行中</p>
@@ -359,10 +390,10 @@ export default function App() {
               className="space-y-8"
             >
               <div className="flex flex-col md:flex-row justify-between items-center gap-4 mb-8">
-                <h2 className="text-4xl font-black italic flex items-center gap-4">
+                <h2 className="text-4xl font-black flex items-center gap-4">
                   <span className="text-neon-pink">分組</span>
                   <span className="text-white">結果</span>
-                  <span className="text-sm bg-white/10 px-3 py-1 rounded-full not-italic font-bold text-gray-400">
+                  <span className="text-sm bg-white/10 px-3 py-1 rounded-full font-bold text-gray-400">
                     共 {groups.length} 組
                   </span>
                 </h2>
